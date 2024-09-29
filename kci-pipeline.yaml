@@ -1,0 +1,55 @@
+Schedule:
+  nightly:
+    cron: '0 5 * * 1-5'
+    branch: main
+
+Build phase:
+  stages:
+    Update Xray in Jira:
+      parallel_group: parallel
+      when:
+        - PR
+      type: tests
+      steps:
+        - apt-get -y update && apt-get -y install zip
+        - chmod -R 765 scripts/update-features.sh
+        - ./scripts/update-features.sh
+    Example:
+      parallel_group: parallel
+      when:
+        - PR
+        - main
+      type: tests
+      steps:
+        - docker-compose --env-file env-variables/.env.example run --rm Tests
+      send_artifacts:
+        - from_path: 'reports/allure-results-example.tar.gz'
+          to_path: 'allure-results-example.tar.gz'
+    Generate report:
+      when:
+        - main
+        - PR
+      type: tests
+      steps:
+        - chmod -R 765 scripts/generate-report.sh
+        - ./scripts/generate-report.sh
+      get_artifacts:
+        - from_path: 'allure-results-example.tar.gz'
+      reports_allure:
+        - allure-results
+    Evaluate test results:
+      when:
+        - main
+        - PR
+      steps:
+        - chmod -R 765 scripts/check-test-results.sh
+        - ./scripts/check-test-results.sh
+
+Notifications:
+  - channels:
+      - repo-name
+    when:
+      - main
+      - PR
+    status:
+      - FAILURE

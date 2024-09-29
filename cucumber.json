@@ -1,0 +1,35 @@
+{
+    "default": {
+        "format": [
+            "@cucumber/pretty-formatter",
+            "json:reports/report.json",
+            "html:reports/report.html",
+            "./allure-report.mjs"
+        ],
+        "formatOptions": {
+            "colorsEnabled": true,
+            "snippetInterface": "async-await",
+            "theme": {
+                "datatable border": ["green"],
+                "datatable content": ["green", "italic"],
+                "docstring content": ["green", "italic"],
+                "docstring delimiter": ["green"],
+                "feature descritpion": ["green"],
+                "feature keyword": ["bold", "green"],
+                "rule keyword": ["yellow"],
+                "scenario keyword": ["greenBright"],
+                "scenario name": ["green", "underline"],
+                "step keyword": ["bgGreen", "black", "italic"],
+                "step next": ["greenBright", "italic"],
+                "tag": ["green"]
+            }
+        },
+        "paths": ["e2e/features/**/*.feature"],
+        "require": ["e2e/steps/*.ts", "e2e/hooks/hooks.ts"],
+        "requireModule": ["ts-node/register"],
+        "dryRun": false,
+        "parallel": 1,
+        "retry": 0,
+        "publish": true
+    }
+}
