@@ -1,0 +1,18 @@
+version: "1.0"
+
+services:
+  common: &BASE
+    image: playwright-cucumber
+    build:
+      context: .
+      args:
+        - USERNAME=${USERNAME}
+  Tests:
+    <<: *BASE
+    volumes:
+      - ./reports:/reports
+    command: >
+      sh -c "(npm run all-tests-${ACCOUNT} || true)
+      && npm run trim-reports
+      && npm run upload-results
+      && tar -czvf reports/allure-results-${ACCOUNT}.tar.gz reports/allure-results/${ACCOUNT}/*"
